@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: breakapp
+spec:
+  containers:
+  - name: hello-server
+    image: non-existent-image:latest  # 存在しないイメージを指定
+    ports:
+    - containerPort: 8080
