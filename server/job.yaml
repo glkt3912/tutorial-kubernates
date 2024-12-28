@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: date-checker
+spec:
+  template:
+    spec:
+      containers:
+      - name: date
+        image: ubuntu:22.04 # Jobを利用し、このコンテナを起動
+        command: ["date"] # 日時表示コマンド
+      restartPolicy: Never
+  backoffLimit: 4
+---
