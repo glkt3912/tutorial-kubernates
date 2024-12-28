@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: hello-server
+  name: hello-server
+spec:
+  containers:
+  - name: hello-server
+    image: blux2/hello-server:1.6
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "10m"
+      limits: # 使用量制限。メモリが上限値を越えた時はPodがkillされる。　CPUが上限値を越えた場合はスロットリングが発生する
+        memory: "64Mi"
+        cpu: "10m"
+
+# メモ
+# QoS（Quality of Service）クラスは、KubernetesがPodに対してリソースをどのように割り当てるかを決定するための仕組みです。
+# 各Podは、指定されたリソース要求と制限に基づいて、以下のいずれかのQoSクラスに分類されます。
+
+# Guaranteed: すべてのコンテナがrequestsとlimitsを指定し、それらが一致している場合。
+#             最も高い優先度で、指定されたリソースが保証されます。
+# Burstable:  少なくとも1つのコンテナがrequestsを指定しているが、limitsが指定されていない、
+#             またはrequestsとlimitsが一致していない場合。
+#             リソースが保証されますが、Guaranteedよりは優先度が低いです。
+# BestEffort: すべてのコンテナがrequestsとlimitsを指定していない場合。
+#             最も低い優先度で、リソースの保証はありません。

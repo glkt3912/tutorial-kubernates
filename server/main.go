@@ -4,16 +4,41 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, world!")
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
+		}
+		fmt.Fprintf(w, "Hello, world! Let's learn Kubernetes!")
 	})
 
-	log.Println("Starting server on port 8080")
-	err := http.ListenAndServe(":8080", nil)
+	http.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/healthz" {
+			http.NotFound(w, r)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "OK")
+		log.Printf("Health Status OK")
+	})
+
+	http.Handle("/metrics", promhttp.Handler())
+
+	log.Printf("Starting server on port %s\n", port)
+	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 }
